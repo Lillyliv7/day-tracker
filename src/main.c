@@ -15,14 +15,19 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    // cJSON *json = cJSON_Parse("{\"name\":\"test\",\"value\":123}");
-
-    // puts(cJSON_Print(json));
-
     if (!config_parse(argv[1])) {
         fprintf(stderr, "Failed to parse config file: %s\n", argv[1]);
         return 1;
     }
+
+    if (!get_config_string("account_db_path")) {
+        fprintf(stderr, "\"account_db_path\" not found in config!\n");
+        return 1;
+    }
+
+    mkdir(get_config_string("account_db_path"), 777);
+
+
     // puts(cJSON_Print(get_config_json()));
 
     // puts(get_config_string("listen_address"));

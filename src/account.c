@@ -1,8 +1,20 @@
 #include <account.h>
+
 #include <responses.h>
+#include <password.h>
+#include <token.h>
+#include <fnvhash.h>
+
 #include <mongoose.h>
 #include <cjson/cJSON.h>
-#include <password.h>
+
+char *fetch_user_data(const char *username) {
+    
+}
+
+char *set_user_data(const char *username, const char *json) {
+
+}
 
 void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
     cJSON *pass = cJSON_GetObjectItem(request_json, "password");
@@ -14,7 +26,7 @@ void handle_auth_request(struct mg_connection *connection, cJSON *request_json) 
     }
 
     if (verify_password(pass->valuestring, generate_hash("teehee"))) {
-        printf("Password verified successfully.\n");
+        
     } else {
         printf("Password verification failed.\n");
     }
