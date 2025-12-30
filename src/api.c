@@ -15,6 +15,26 @@ void ratelimit_request_res(struct mg_connection *connection) {
     mg_http_reply(connection, 429, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Ratelimit")); 
 }
 
+void invalid_password_request_res(struct mg_connection *connection) {
+    mg_http_reply(connection, 403, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Forbidden")); 
+}
+
+void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
+    cJSON *pass = cJSON_GetObjectItem(request_json, "password");
+    cJSON *username = cJSON_GetObjectItem(request_json, "username");
+    if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
+        invalid_request_res(connection);
+        cJSON_Delete(request_json);
+        return;
+    }
+
+    if (verify_password(pass->valuestring, generate_hash("teehee"))) {
+        printf("Password verified successfully.\n");
+    } else {
+        printf("Password verification failed.\n");
+    }
+}
+
 void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
     if(ev == MG_EV_HTTP_MSG) {
         struct mg_http_message *msg = (struct mg_http_message *) ev_data;
@@ -31,11 +51,18 @@ void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
         cJSON *request_json = cJSON_Parse(msg->body.buf);
         if (request_json == NULL) {
             invalid_request_res(connection);
+            cJSON_Delete(request_json);
             return;
         }
         cJSON *request_type = cJSON_GetObjectItem(request_json, "type");
         if (!cJSON_IsString(request_type)) {
             invalid_request_res(connection);
+            cJSON_Delete(request_json);
+            return;
+        }
+        if (!strcmp(request_type->valuestring, "auth")) {
+            handle_auth_request(connection, request_json);
+            cJSON_Delete(request_json);
             return;
         }
 

@@ -4,6 +4,7 @@ REQUEST_AUTH:
 req:
 {
     "type": "auth",
+    "username": "lillyliv7"
     "password": "password123"
 }
 res:
