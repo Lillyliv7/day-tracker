@@ -4,6 +4,7 @@
 
 #include <fnvhash.h>
 #include <password.h>
+#include <api.h>
 
 
 int main(int argc, char **argv) {
@@ -19,6 +20,7 @@ int main(int argc, char **argv) {
     //     printf("Password verification failed.\n");
     // }
 
+    api_init();
 
     return 0;
 }
