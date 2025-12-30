@@ -13,6 +13,7 @@ char *fetch_user_data(const char *username);
 bool set_user_data(const char *username, const char *json);
 
 char* account_create_token(cJSON *user_json);
+bool verify_token(const char *username, const char *token);
 char* check_account_token(const char *username);
 
 bool delete_account(const char *username);

@@ -103,6 +103,37 @@ char* check_account_token(const char *username) {
     
 }
 
+bool verify_token(const char *username, const char *token) {
+    char *user_data = fetch_user_data(username);
+    if (user_data == NULL) {
+        return false;
+    }
+    cJSON *user_json = cJSON_Parse(user_data);
+    free(user_data);
+    if (user_json == NULL) {
+        return false;
+    }
+    cJSON *stored_token = cJSON_GetObjectItem(user_json, "token");
+    if (!cJSON_IsString(stored_token)) {
+        cJSON_Delete(user_json);
+        return false;
+    }
+
+    cJSON *stored_token = cJSON_GetObjectItem(user_json, "token_expiry");
+    if (!cJSON_IsNumber(stored_token)) {
+        cJSON_Delete(user_json);
+        return false;
+    }
+    if (stored_token->valuedouble < time(NULL)) {
+        cJSON_Delete(user_json);
+        return false;
+    }
+
+    bool result = (strcmp(stored_token->valuestring, token) == 0);
+    cJSON_Delete(user_json);
+    return result;
+}
+
 bool create_account(const char *username, const char *password) {
     if (account_exists(username)) {
         return false;

@@ -14,7 +14,6 @@ res:
 }
 
 REQUEST_CREATE_ACCOUNT:
-
 req:
 {
     "type": "create_account",
@@ -32,6 +31,22 @@ req:
     "type": "delete_account",
     "username": "lillyliv7"
     "password": "password123"
+}
+res:
+{
+    "status": "success"
+}
+
+REQUEST_ADD_DAY:
+req:
+{
+    "type": "add_day",
+    "year": 2025,
+    "month": 12,
+    "day": 25,
+    "rating: 100,
+    "note": "great day!"
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
 res:
 {

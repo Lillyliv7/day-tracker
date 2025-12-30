@@ -4,6 +4,7 @@
 #include <responses.h>
 #include <config.h>
 #include <account.h>
+#include <day.h>
 
 #include <mongoose.h>
 #include <cjson/cJSON.h>
@@ -34,7 +35,7 @@ void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
             return;
         }
 
-        
+
         if (!strcmp(request_type->valuestring, "auth")) {
             handle_auth_request(connection, request_json);
             cJSON_Delete(request_json);
@@ -48,6 +49,11 @@ void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
 
         if (!strcmp(request_type->valuestring, "delete_account")) {
             handle_delete_account_request(connection, request_json);
+            cJSON_Delete(request_json);
+            return;
+        }
+        if (!strcmp(request_type->valuestring, "add_day")) {
+            handle_add_day_request(connection, request_json);
             cJSON_Delete(request_json);
             return;
         }
