@@ -12,3 +12,15 @@ res:
     "status": "success"
     "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
+
+REQUEST_CREATE_ACCOUNT
+req:
+{
+    "type": "create_account",
+    "username": "lillyliv7"
+    "password": "password123"
+}
+res:
+{
+    "status": "success"
+}

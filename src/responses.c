@@ -20,3 +20,7 @@ void unauthorized_request_res(struct mg_connection *connection) {
 void server_error_res(struct mg_connection *connection) {
     mg_http_reply(connection, 500, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Internal Server Error")); 
 }
+
+void success_res(struct mg_connection *connection) {
+    mg_http_reply(connection, 200, "", "{%m:%m}\n", MG_ESC("status"), MG_ESC("Success")); 
+}

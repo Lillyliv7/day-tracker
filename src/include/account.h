@@ -15,4 +15,6 @@ bool set_user_data(const char *username, const char *json);
 char* account_create_token(cJSON *user_json);
 char* check_account_token(const char *username);
 
+bool create_account(const char *username, const char *password);
+void handle_create_account_request(struct mg_connection *connection, cJSON *request_json);
 void handle_auth_request(struct mg_connection *connection, cJSON *request_json);

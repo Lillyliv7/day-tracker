@@ -105,6 +105,38 @@ char* check_account_token(const char *username) {
     
 }
 
+bool create_account(const char *username, const char *password) {
+    if (account_exists(username)) {
+        return false;
+    }
+
+    cJSON *user_json = cJSON_CreateObject();
+    cJSON_AddStringToObject(user_json, "username", username);
+    cJSON_AddStringToObject(user_json, "password", generate_hash(password));
+
+    char* json_string = cJSON_Print(user_json);
+    bool result = set_user_data(username, json_string);
+    free(json_string);
+    cJSON_Delete(user_json);
+    return result;
+}
+
+void handle_create_account_request(struct mg_connection *connection, cJSON *request_json) {
+    cJSON *pass = cJSON_GetObjectItem(request_json, "password");
+    cJSON *username = cJSON_GetObjectItem(request_json, "username");
+    if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
+        invalid_request_res(connection);
+        return;
+    }
+    if (create_account(username->valuestring, pass->valuestring)) {
+        success_res(connection);
+        return;
+    } else {
+        invalid_request_res(connection);
+        return;
+    }
+}
+
 void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
     cJSON *pass = cJSON_GetObjectItem(request_json, "password");
     cJSON *username = cJSON_GetObjectItem(request_json, "username");
