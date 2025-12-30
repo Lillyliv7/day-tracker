@@ -119,12 +119,12 @@ bool verify_token(const char *username, const char *token) {
         return false;
     }
 
-    cJSON *stored_token = cJSON_GetObjectItem(user_json, "token_expiry");
-    if (!cJSON_IsNumber(stored_token)) {
+    cJSON *token_expiry = cJSON_GetObjectItem(user_json, "token_expiry");
+    if (!cJSON_IsNumber(token_expiry)) {
         cJSON_Delete(user_json);
         return false;
     }
-    if (stored_token->valuedouble < time(NULL)) {
+    if (token_expiry->valuedouble < time(NULL)) {
         cJSON_Delete(user_json);
         return false;
     }

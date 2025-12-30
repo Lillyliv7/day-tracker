@@ -45,7 +45,8 @@ req:
     "month": 12,
     "day": 25,
     "rating: 100,
-    "note": "great day!"
+    "note": "great day!",
+    "username": "lillyliv7",
     "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
 res:
