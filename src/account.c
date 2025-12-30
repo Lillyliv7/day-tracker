@@ -73,9 +73,7 @@ bool set_user_data(const char *username, const char *json) {
 
 char* account_create_token(cJSON *user_json) {
     char *token = generate_token();
-    // cJSON_AddStringToObject(user_json, "token", token);
     cJSON_SetString(user_json, "token", token);
-    // cJSON_AddNumberToObject(user_json, "token_expiry", time(NULL) + TOKEN_EXPIRY_SECONDS);
     cJSON_SetInt(user_json, "token_expiry", time(NULL) + TOKEN_EXPIRY_SECONDS);
     char* json_string = cJSON_Print(user_json);
     set_user_data(cJSON_GetObjectItem(user_json, "username")->valuestring, json_string);
@@ -119,6 +117,40 @@ bool create_account(const char *username, const char *password) {
     free(json_string);
     cJSON_Delete(user_json);
     return result;
+}
+
+bool delete_account(const char *username) {
+    if (!account_exists(username)) return false;
+
+    char* path = get_account_path(username);
+    return (remove(path) == 0);
+}
+
+void handle_delete_account_request(struct mg_connection *connection, cJSON *request_json) {
+    cJSON *pass = cJSON_GetObjectItem(request_json, "password");
+    cJSON *username = cJSON_GetObjectItem(request_json, "username");
+    if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
+        invalid_request_res(connection);
+        return;
+    }
+
+    if (!account_exists(username->valuestring)) {
+        unauthorized_request_res(connection);
+        return;
+    }
+
+    if (verify_password(pass->valuestring, generate_hash("teehee"))) {
+        if (delete_account(username->valuestring)) {
+            success_res(connection);
+            return;
+        } else {
+            server_error_res(connection);
+            return;
+        }
+    } else {
+        unauthorized_request_res(connection);
+        return;
+    }
 }
 
 void handle_create_account_request(struct mg_connection *connection, cJSON *request_json) {
