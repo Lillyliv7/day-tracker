@@ -27,3 +27,4 @@ else()
     message(WARNING "libcrypt not found via find_library; linking against -lcrypt name instead")
     target_link_libraries(${PROJECT_NAME} PRIVATE crypt)
 endif()
+

@@ -1,0 +1,1 @@
+dependencies: C 11 compatible compiler, make, cmake, libcrypt, cjson
