@@ -13,8 +13,8 @@ char *generate_token() {
 
     FILE *rand = fopen("/dev/urandom", "rb");
     if (!rand) {
-        perror("Failed to open config /dev/urandom!");
-        return 1;
+        fprintf(stderr, "Failed to open config /dev/urandom!");
+        return NULL;
     }
 
     fseek(rand, 0, SEEK_END);
@@ -31,7 +31,7 @@ char *generate_token() {
         sprintf(&tokenStr[i * 2], "%02x", tokenBuf[i]);
     }
     free(tokenBuf);
-    
+
     puts(tokenStr);
     return tokenStr;
 }

@@ -41,8 +41,6 @@ int config_parse(const char *filename) {
     data[length] = '\0';
     fclose(file);
 
-    puts(data);
-
     config_json = cJSON_Parse(data);
 
     if (!config_json) {

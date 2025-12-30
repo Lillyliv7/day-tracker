@@ -3,6 +3,7 @@
 #include <mongoose.h>
 #include <cjson/cJSON.h>
 
+char* get_account_path(const char *username);
 char *fetch_user_data(const char *username);
 char *set_user_data(const char *username, const char *json);
 

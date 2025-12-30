@@ -51,7 +51,6 @@ void api_init() {
         fprintf(stderr, "\"listen_address\" not found in config!\n");
         exit(1);
     }
-    puts(listen_address);
     mg_mgr_init(&mgr);
     mg_http_listen(&mgr, listen_address, handle_event, NULL);
     for (;;) {

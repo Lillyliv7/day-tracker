@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
 
 #include <cjson/cJSON.h>
 
@@ -7,6 +8,7 @@
 #include <password.h>
 #include <api.h>
 #include <config.h>
+#include <account.h>
 
 int main(int argc, char **argv) {
 
@@ -25,7 +27,13 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    mkdir(get_config_string("account_db_path"), 777);
+    DIR *db_dir = opendir(get_config_string("account_db_path"));
+    if(!db_dir) {
+        fprintf(stderr, "\"account_db_path\" %s does not exist!\n", get_config_string("account_db_path"));
+        return 1;
+    }
+    closedir(db_dir);
+
 
 
     // puts(cJSON_Print(get_config_json()));
@@ -40,6 +48,9 @@ int main(int argc, char **argv) {
     //     printf("Password verification failed.\n");
     // }
 
+    // puts(get_account_path("testusrr"));
+    // puts(get_account_path("testuser"));
+    // puts(fetch_user_data("testuser"));
     api_init();
 
     return 0;
