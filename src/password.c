@@ -11,7 +11,7 @@
 
 
 bool verify_password(const char *password, const char *hash) {
-    char *calculated_hash = crypt(password, hash);
+    char *calculated_hash = strdup(crypt(password, hash));
     // printf("Calculated hash: %s\n", calculated_hash);
     if (calculated_hash == NULL) return false;
     return strcmp(calculated_hash, hash) == 0;
@@ -23,10 +23,10 @@ char *generate_hash(const char *password) {
         fprintf(stderr, "Error generating salt\n");
         return NULL;
     }
-    char *hashed = crypt(password, salt);
+    char *hashed = strdup(crypt(password, salt));
     if (hashed == NULL) {
         fprintf(stderr, "Error hashing password\n");
         return NULL;
     }
-    return strdup(hashed);
+    return hashed;
 }

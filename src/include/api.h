@@ -1,3 +1,5 @@
 #pragma once
 
-void handle_request(char* request);
+void api_init();
+
+void handle_request();

@@ -1,3 +1,5 @@
+This is a lightweight selfhosted (WIP) day tracker. It lets you track how each day was for you throughout the year was and add a note to each one.
+
 dependencies: C 11 compatible compiler, make, cmake, libcrypt, cjson
 
 install on ubuntu: 
