@@ -10,7 +10,7 @@
 bool account_exists(const char *username);
 char* get_account_path(const char *username);
 char *fetch_user_data(const char *username);
-bool set_user_data(const char *username, const char *json);
+bool set_user_data(const char *username, cJSON *json);
 
 char* account_create_token(cJSON *user_json);
 bool verify_token(const char *username, const char *token);

@@ -59,15 +59,18 @@ char *fetch_user_data(const char *username) {
     return data;
 }
 
-bool set_user_data(const char *username, const char *json) {
+bool set_user_data(const char *username, cJSON *json) {
+    char* json_string = cJSON_Print(json);
+
     char* path = get_account_path(username);
 
     FILE *file = fopen(path, "w");
     free(path);
     if (!file) return false;
 
-    fwrite(json, 1, strlen(json), file);
+    fwrite(json_string, 1, strlen(json_string), file);
     fclose(file);
+    free(json_string);
     return true;
 }
 
@@ -75,9 +78,7 @@ char* account_create_token(cJSON *user_json) {
     char *token = generate_token();
     cJSON_SetString(user_json, "token", token);
     cJSON_SetInt(user_json, "token_expiry", time(NULL) + TOKEN_EXPIRY_SECONDS);
-    char* json_string = cJSON_Print(user_json);
-    set_user_data(cJSON_GetObjectItem(user_json, "username")->valuestring, json_string);
-    free(json_string);
+    set_user_data(cJSON_GetObjectItem(user_json, "username")->valuestring, user_json);
     
     return token;
 }
@@ -143,9 +144,7 @@ bool create_account(const char *username, const char *password) {
     cJSON_AddStringToObject(user_json, "username", username);
     cJSON_AddStringToObject(user_json, "password", generate_hash(password));
 
-    char* json_string = cJSON_Print(user_json);
-    bool result = set_user_data(username, json_string);
-    free(json_string);
+    bool result = set_user_data(username, user_json);
     cJSON_Delete(user_json);
     return result;
 }

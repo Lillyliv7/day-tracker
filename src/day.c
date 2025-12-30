@@ -1,5 +1,7 @@
 #include <day.h>
 
+#include <cjson/cJSON.h>
+
 #include <stdbool.h>
 
 #include <responses.h>

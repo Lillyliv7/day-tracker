@@ -33,8 +33,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     closedir(db_dir);
-    puts(generate_hash("teehee"));
-    printf("%lx\n",fnv1a_hash("lilly"));
+
     api_init();
 
     return 0;

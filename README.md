@@ -3,7 +3,7 @@ This is a lightweight selfhosted (WIP) day tracker. It lets you track how each d
 Current features:  
 Account Creation: ✅  
 Login: ✅  
-Account Deletion: ✅
+Account Deletion: ✅  
 Ratelimit: ❌  
 Add days: ❌  
 Fetch days: ❌  
