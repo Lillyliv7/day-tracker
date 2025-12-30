@@ -28,3 +28,5 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE crypt)
 endif()
 
+find_package(cJSON REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC cjson)

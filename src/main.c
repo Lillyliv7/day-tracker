@@ -4,11 +4,10 @@
 #include <password.h>
 
 
-
 int main(int argc, char **argv) {
 
 
-    printf("%lx\n", fnv1a_hash("helko"));
+    printf("%lx\n", fnv1a_hash("你好世界"));
 
     if (verify_password("teehee", generate_hash("teehee"))) {
         printf("Password verified successfully.\n");
