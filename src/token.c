@@ -32,6 +32,5 @@ char *generate_token() {
     }
     free(tokenBuf);
 
-    puts(tokenStr);
     return tokenStr;
 }

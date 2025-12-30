@@ -3,12 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include <responses.h>
 #include <password.h>
 #include <token.h>
 #include <fnvhash.h>
 #include <config.h>
+#include <cjson_helper.h>
 
 #include <mongoose.h>
 #include <cjson/cJSON.h>
@@ -69,6 +71,40 @@ bool set_user_data(const char *username, const char *json) {
     return true;
 }
 
+char* account_create_token(cJSON *user_json) {
+    char *token = generate_token();
+    // cJSON_AddStringToObject(user_json, "token", token);
+    cJSON_SetString(user_json, "token", token);
+    // cJSON_AddNumberToObject(user_json, "token_expiry", time(NULL) + TOKEN_EXPIRY_SECONDS);
+    cJSON_SetInt(user_json, "token_expiry", time(NULL) + TOKEN_EXPIRY_SECONDS);
+    char* json_string = cJSON_Print(user_json);
+    set_user_data(cJSON_GetObjectItem(user_json, "username")->valuestring, json_string);
+    free(json_string);
+    
+    return token;
+}
+
+char* check_account_token(const char *username) {
+    char *user_data = fetch_user_data(username);
+    if (user_data == NULL) {
+        return NULL;
+    }
+    cJSON *user_json = cJSON_Parse(user_data);
+    free(user_data);
+    if (user_json == NULL) {
+        return NULL;
+    }
+    cJSON *token = cJSON_GetObjectItem(user_json, "token");
+    if (!cJSON_IsString(token)) {
+        return account_create_token(user_json);
+    }
+    if (cJSON_GetObjectItem(user_json, "token_expiry")->valuedouble < time(NULL)) {
+        return account_create_token(user_json);
+    }
+    return strdup(token->valuestring);
+    
+}
+
 void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
     cJSON *pass = cJSON_GetObjectItem(request_json, "password");
     cJSON *username = cJSON_GetObjectItem(request_json, "username");
@@ -82,10 +118,14 @@ void handle_auth_request(struct mg_connection *connection, cJSON *request_json) 
         return;
     }
 
-
-
     if (verify_password(pass->valuestring, generate_hash("teehee"))) {
-        mg_http_reply(connection, 200, "", "{%m:%m}\n", MG_ESC("status"), MG_ESC("success"));
+        char* token = check_account_token(username->valuestring);
+        if (token == NULL) {
+            server_error_res(connection);
+            return;
+        }
+        mg_http_reply(connection, 200, "", "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("success"), MG_ESC("token"), MG_ESC(token));
+        free(token);
         return;
     } else {
         unauthorized_request_res(connection);

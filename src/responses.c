@@ -17,3 +17,6 @@ void invalid_password_request_res(struct mg_connection *connection) {
 void unauthorized_request_res(struct mg_connection *connection) {
     mg_http_reply(connection, 401, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Unauthorized")); 
 }
+void server_error_res(struct mg_connection *connection) {
+    mg_http_reply(connection, 500, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Internal Server Error")); 
+}

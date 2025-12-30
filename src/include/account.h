@@ -4,9 +4,15 @@
 
 #include <mongoose.h>
 #include <cjson/cJSON.h>
+
+#define TOKEN_EXPIRY_SECONDS 2592000 // 30 days
+
 bool account_exists(const char *username);
 char* get_account_path(const char *username);
 char *fetch_user_data(const char *username);
 bool set_user_data(const char *username, const char *json);
+
+char* account_create_token(cJSON *user_json);
+char* check_account_token(const char *username);
 
 void handle_auth_request(struct mg_connection *connection, cJSON *request_json);

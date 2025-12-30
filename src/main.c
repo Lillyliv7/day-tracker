@@ -33,23 +33,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     closedir(db_dir);
-
-
-
-    // puts(cJSON_Print(get_config_json()));
-
-    // puts(get_config_string("listen_address"));
-
-
-    // if (verify_password("teehee", generate_hash("teehee"))) {
-    //     printf("Password verified successfully.\n");
-    // } else {
-    //     printf("Password verification failed.\n");
-    // }
-
-    // puts(get_account_path("testusrr"));
-    // puts(get_account_path("testuser"));
-    // puts(fetch_user_data("testuser"));
+    puts(generate_hash("teehee"));
+    printf("%lx\n",fnv1a_hash("lilly"));
     api_init();
 
     return 0;
