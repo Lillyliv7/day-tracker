@@ -13,3 +13,7 @@ void ratelimit_request_res(struct mg_connection *connection) {
 void invalid_password_request_res(struct mg_connection *connection) {
     mg_http_reply(connection, 403, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Forbidden")); 
 }
+
+void unauthorized_request_res(struct mg_connection *connection) {
+    mg_http_reply(connection, 401, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Unauthorized")); 
+}

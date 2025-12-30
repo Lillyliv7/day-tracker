@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <responses.h>
 #include <password.h>
@@ -11,6 +12,17 @@
 
 #include <mongoose.h>
 #include <cjson/cJSON.h>
+
+bool account_exists(const char *username) {
+    char* path = get_account_path(username);
+    FILE *file = fopen(path, "rb");
+    free(path);
+    if (!file) {
+        return false;
+    }
+    fclose(file);
+    return true;
+}
 
 char* get_account_path(const char *username) {
     char* path = (char*) malloc(1024);
@@ -36,7 +48,7 @@ char *fetch_user_data(const char *username) {
     if (!data) {
         perror("Failed to allocate memory for config file");
         fclose(file);
-        return 0;
+        return NULL;
     }
 
     fread(data, 1, length, file);
@@ -45,8 +57,16 @@ char *fetch_user_data(const char *username) {
     return data;
 }
 
-char *set_user_data(const char *username, const char *json) {
+bool set_user_data(const char *username, const char *json) {
+    char* path = get_account_path(username);
 
+    FILE *file = fopen(path, "w");
+    free(path);
+    if (!file) return false;
+
+    fwrite(json, 1, strlen(json), file);
+    fclose(file);
+    return true;
 }
 
 void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
@@ -54,13 +74,21 @@ void handle_auth_request(struct mg_connection *connection, cJSON *request_json) 
     cJSON *username = cJSON_GetObjectItem(request_json, "username");
     if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
         invalid_request_res(connection);
-        cJSON_Delete(request_json);
         return;
     }
 
+    if (!account_exists(username->valuestring)) {
+        unauthorized_request_res(connection);
+        return;
+    }
+
+
+
     if (verify_password(pass->valuestring, generate_hash("teehee"))) {
-        
+        mg_http_reply(connection, 200, "", "{%m:%m}\n", MG_ESC("status"), MG_ESC("success"));
+        return;
     } else {
-        printf("Password verification failed.\n");
+        unauthorized_request_res(connection);
+        return;
     }
 }
