@@ -19,11 +19,13 @@ int main(int argc, char **argv) {
 
     // puts(cJSON_Print(json));
 
-    if (config_parse(argv[1])) {
+    if (!config_parse(argv[1])) {
         fprintf(stderr, "Failed to parse config file: %s\n", argv[1]);
         return 1;
     }
-    puts(cJSON_Print(get_config_json()));
+    // puts(cJSON_Print(get_config_json()));
+
+    // puts(get_config_string("listen_address"));
 
     // printf("%lx\n", fnv1a_hash("你好世界"));
 

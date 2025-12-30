@@ -10,6 +10,14 @@ cJSON *get_config_json() {
     return config_json;
 }
 
+const char* get_config_string(const char *key) {
+    cJSON *item = cJSON_GetObjectItem(config_json, key);
+    if (cJSON_IsString(item)) {
+        return item->valuestring;
+    }
+    return NULL;
+}
+
 int config_parse(const char *filename) {
     FILE *file = fopen(filename, "rb");
     if (!file) {
@@ -26,7 +34,7 @@ int config_parse(const char *filename) {
     if (!data) {
         perror("Failed to allocate memory for config file");
         fclose(file);
-        return 1;
+        return 0;
     }
 
     fread(data, 1, length, file);
@@ -44,11 +52,11 @@ int config_parse(const char *filename) {
         }
         fprintf(stderr, "Failed to parse config JSON\n");
         free(data);
-        return 1;
+        return 0;
     }
 
     free(data);
 
-    return 0;
+    return 1;
 
 }
