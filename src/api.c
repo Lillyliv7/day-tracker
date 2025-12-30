@@ -7,23 +7,35 @@
 #include <mongoose.h>
 #include <cjson/cJSON.h>
 
-void invalid_request(struct mg_connection *connection) {
+void invalid_request_res(struct mg_connection *connection) {
     mg_http_reply(connection, 400, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Invalid request")); 
+}
+
+void ratelimit_request_res(struct mg_connection *connection) {
+    mg_http_reply(connection, 429, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Ratelimit")); 
 }
 
 void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
     if(ev == MG_EV_HTTP_MSG) {
         struct mg_http_message *msg = (struct mg_http_message *) ev_data;
         puts(msg->body.buf);
+        if (msg->body.len == 0) {
+            invalid_request_res(connection);
+            return;
+        }
+        if (msg->body.len > 1000000) {
+            ratelimit_request_res(connection);
+            return;
+        }
 
         cJSON *request_json = cJSON_Parse(msg->body.buf);
         if (request_json == NULL) {
-            invalid_request(connection);
+            invalid_request_res(connection);
             return;
         }
         cJSON *request_type = cJSON_GetObjectItem(request_json, "type");
         if (!cJSON_IsString(request_type)) {
-            invalid_request(connection);
+            invalid_request_res(connection);
             return;
         }
 
