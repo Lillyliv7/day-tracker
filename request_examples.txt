@@ -1,0 +1,13 @@
+
+
+REQUEST_AUTH:
+req:
+{
+    "type": "auth",
+    "password": "password123"
+}
+res:
+{
+    "status": "success"
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
+}

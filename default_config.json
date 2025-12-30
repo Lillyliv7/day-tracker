@@ -1,3 +1,4 @@
 {
-    "listen_address": "http://0.0.0.0:8000"
+    "listen_address": "http://0.0.0.0:8000",
+    "account_db_path": "./data/"
 }
