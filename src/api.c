@@ -1,39 +1,28 @@
 #include <api.h>
 
 #include <password.h>
-
+#include <responses.h>
 #include <config.h>
+#include <account.h>
 
 #include <mongoose.h>
 #include <cjson/cJSON.h>
 
-void invalid_request_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 400, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Invalid request")); 
-}
+// void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
+//     cJSON *pass = cJSON_GetObjectItem(request_json, "password");
+//     cJSON *username = cJSON_GetObjectItem(request_json, "username");
+//     if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
+//         invalid_request_res(connection);
+//         cJSON_Delete(request_json);
+//         return;
+//     }
 
-void ratelimit_request_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 429, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Ratelimit")); 
-}
-
-void invalid_password_request_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 403, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Forbidden")); 
-}
-
-void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
-    cJSON *pass = cJSON_GetObjectItem(request_json, "password");
-    cJSON *username = cJSON_GetObjectItem(request_json, "username");
-    if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
-        invalid_request_res(connection);
-        cJSON_Delete(request_json);
-        return;
-    }
-
-    if (verify_password(pass->valuestring, generate_hash("teehee"))) {
-        printf("Password verified successfully.\n");
-    } else {
-        printf("Password verification failed.\n");
-    }
-}
+//     if (verify_password(pass->valuestring, generate_hash("teehee"))) {
+//         printf("Password verified successfully.\n");
+//     } else {
+//         printf("Password verification failed.\n");
+//     }
+// }
 
 void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
     if(ev == MG_EV_HTTP_MSG) {
