@@ -1,7 +1,9 @@
 # AI generated CMakeLists.txt, I have no idea how to write these, sorry
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.28)
 project(day-tracker LANGUAGES C)
+
+include(FetchContent)
 
 # Use a modern C standard
 set(CMAKE_C_STANDARD 11)
@@ -30,3 +32,19 @@ endif()
 
 find_package(cJSON REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC cjson)
+
+
+FetchContent_Declare(
+    mongoose
+    GIT_REPOSITORY https://github.com/cesanta/mongoose
+    GIT_TAG        7.20
+)
+FetchContent_MakeAvailable(mongoose)
+list(APPEND SRC_FILES "${mongoose_SOURCE_DIR}/mongoose.c")
+target_sources(${PROJECT_NAME} PRIVATE "${mongoose_SOURCE_DIR}/mongoose.c")
+
+target_include_directories(${PROJECT_NAME} 
+    PRIVATE 
+        "${CMAKE_SOURCE_DIR}/src/include"
+        "${mongoose_SOURCE_DIR}"
+)

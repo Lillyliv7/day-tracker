@@ -12,12 +12,12 @@
 
 bool verify_password(const char *password, const char *hash) {
     char *calculated_hash = strdup(crypt(password, hash));
-    // printf("Calculated hash: %s\n", calculated_hash);
     if (calculated_hash == NULL) return false;
-    return strcmp(calculated_hash, hash) == 0;
+    return !strcmp(calculated_hash, hash);
 }
 
 char *generate_hash(const char *password) {
+    // $2a$ is for bcrypt
     const char *salt = crypt_gensalt("$2a$", 12, NULL, 0);
     if (salt == NULL) {
         fprintf(stderr, "Error generating salt\n");
