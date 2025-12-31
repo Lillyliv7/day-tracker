@@ -5,10 +5,11 @@ Account Creation: ✅
 Login: ✅  
 Account Deletion: ✅  
 Ratelimit: ❌  
-Add days: ❌  
+Add days: ✅  
 Fetch days: ❌  
 Reminder Notifications: ❌  
 Password Reset: ❌  
+Upload Images: ❌  
 Web UI: ❌  
 Android App: ❌  
 

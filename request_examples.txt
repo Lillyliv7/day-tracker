@@ -53,3 +53,18 @@ res:
 {
     "status": "success"
 }
+
+REQUEST_DELETE_DAY:
+req:
+{
+    "type": "delete_day",
+    "year": 2025,
+    "month": 12,
+    "day": 25,
+    "username": "lillyliv7",
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
+}
+res:
+{
+    "status": "success"
+}
