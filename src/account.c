@@ -218,7 +218,7 @@ void handle_auth_request(struct mg_connection *connection, cJSON *request_json) 
             server_error_res(connection);
             return;
         }
-        mg_http_reply(connection, 200, "", "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("success"), MG_ESC("token"), MG_ESC(token));
+        mg_http_reply(connection, 200, CORS_HEADERS, "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("success"), MG_ESC("token"), MG_ESC(token));
         free(token);
         return;
     } else {

@@ -3,24 +3,24 @@
 #include <mongoose.h>
 
 void invalid_request_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 400, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Invalid request")); 
+    mg_http_reply(connection, 400, CORS_HEADERS"", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Invalid request")); 
 }
 
 void ratelimit_request_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 429, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Ratelimit")); 
+    mg_http_reply(connection, 429, CORS_HEADERS"", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Ratelimit")); 
 }
 
 void invalid_password_request_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 403, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Forbidden")); 
+    mg_http_reply(connection, 403, CORS_HEADERS"", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Forbidden")); 
 }
 
 void unauthorized_request_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 401, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Unauthorized")); 
+    mg_http_reply(connection, 401, CORS_HEADERS"", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Unauthorized")); 
 }
 void server_error_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 500, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Internal Server Error")); 
+    mg_http_reply(connection, 500, CORS_HEADERS"", "{%m:%m}\n", MG_ESC("error"), MG_ESC("Internal Server Error")); 
 }
 
 void success_res(struct mg_connection *connection) {
-    mg_http_reply(connection, 200, "", "{%m:%m}\n", MG_ESC("status"), MG_ESC("Success")); 
+    mg_http_reply(connection, 200, CORS_HEADERS"", "{%m:%m}\n", MG_ESC("status"), MG_ESC("Success")); 
 }

@@ -12,15 +12,26 @@
 void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
     if(ev == MG_EV_HTTP_MSG) {
         struct mg_http_message *msg = (struct mg_http_message *) ev_data;
+
         puts(msg->body.buf);
-        if (msg->body.len == 0) {
-            invalid_request_res(connection);
-            return;
-        }
+        // if (msg->body.len == 0) {
+        //     invalid_request_res(connection);
+        //     return;
+        // }
         if (msg->body.len > 1000000) {
             ratelimit_request_res(connection);
             return;
         }
+
+        // allow cors
+        if (mg_strcmp(msg->method, mg_str("OPTIONS")) == 0) {
+        mg_http_reply(connection, 204, 
+            "Access-Control-Allow-Origin: *\r\n"
+            "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
+            "Access-Control-Allow-Headers: Content-Type\r\n", 
+            "");
+        return;
+    }
 
         cJSON *request_json = cJSON_Parse(msg->body.buf);
         if (request_json == NULL) {

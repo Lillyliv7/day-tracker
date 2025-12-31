@@ -1,4 +1,7 @@
-This is a lightweight selfhosted (WIP) day tracker. It lets you track how each day was for you throughout the year was and add a note to each one.
+# IMPORTANT!
+This project is a work in progress and it is highly reccomended to not expose this to the open internet until proper safety features are implemented!
+
+This is a lightweight selfhosted day tracker. It lets you track how each day was for you throughout the year was and add a note to each one.
 
 Current features:  
 Account Creation: ✅  
@@ -10,7 +13,7 @@ Fetch days: ✅
 Reminder Notifications: ❌  
 Password Reset: ❌  
 Upload Images: ❌  
-Web UI: ❌  
+Web UI: 🟨  
 Android App: ❌  
 
 dependencies: C 11 compatible compiler, make, cmake, libcrypt, cjson
@@ -28,6 +31,7 @@ git clone https://github.com/Lillyliv7/day-tracker
 cd day-tracker
 mkdir build
 cd build
+mkdir data
 cmake ..
 make
 ```

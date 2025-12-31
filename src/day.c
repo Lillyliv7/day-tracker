@@ -189,5 +189,5 @@ void handle_get_days_request (struct mg_connection *connection, cJSON *request_j
         days = cJSON_AddArrayToObject(user_json, "days");
     
 
-    mg_http_reply(connection, 200, "", "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("Success"), MG_ESC("days"), MG_ESC(cJSON_PrintUnformatted(days)));
+    mg_http_reply(connection, 200, CORS_HEADERS"", "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("Success"), MG_ESC("days"), MG_ESC(cJSON_PrintUnformatted(days)));
 }
