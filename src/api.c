@@ -62,6 +62,11 @@ void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
             cJSON_Delete(request_json);
             return;
         }
+        if (!strcmp(request_type->valuestring, "get_days")) {
+            handle_get_days_request(connection, request_json);
+            cJSON_Delete(request_json);
+            return;
+        }
 
         mg_http_reply(connection, 500, "", "{%m:%m}\n", MG_ESC("error"), MG_ESC("teehee"));
         cJSON_Delete(request_json);

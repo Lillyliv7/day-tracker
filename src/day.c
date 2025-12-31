@@ -1,6 +1,7 @@
 #include <day.h>
 
 #include <cjson/cJSON.h>
+#include <mongoose.h>
 
 #include <stdbool.h>
 
@@ -159,4 +160,34 @@ void handle_delete_day_request (struct mg_connection *connection, cJSON *request
         return;
     }
     success_res(connection);
+}
+
+void handle_get_days_request (struct mg_connection *connection, cJSON *request_json) {
+    cJSON *token = cJSON_GetObjectItem(request_json, "token");
+    cJSON *username = cJSON_GetObjectItem(request_json, "username");
+    if (!cJSON_IsString(token) || !cJSON_IsString(username)) {
+        invalid_request_res(connection);
+        return;
+    }
+    if (!verify_token(username->valuestring, token->valuestring)) {
+        unauthorized_request_res(connection);
+        return;
+    }
+
+    char *user_data = fetch_user_data(username->valuestring);
+    if (user_data == NULL) {
+        return;
+    }
+    cJSON *user_json = cJSON_Parse(user_data);
+    free(user_data);
+    if (user_json == NULL) {
+        return;
+    }
+
+    cJSON *days = cJSON_GetObjectItem(user_json, "days");
+    if (!cJSON_IsArray(days))
+        days = cJSON_AddArrayToObject(user_json, "days");
+    
+
+    mg_http_reply(connection, 200, "", "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("Success"), MG_ESC("days"), MG_ESC(cJSON_Print(days)));
 }

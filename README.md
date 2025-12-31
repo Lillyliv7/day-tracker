@@ -6,7 +6,7 @@ Login: ✅
 Account Deletion: ✅  
 Ratelimit: ❌  
 Add days: ✅  
-Fetch days: ❌  
+Fetch days: ✅  
 Reminder Notifications: ❌  
 Password Reset: ❌  
 Upload Images: ❌  

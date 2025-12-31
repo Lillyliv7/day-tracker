@@ -68,3 +68,29 @@ res:
 {
     "status": "success"
 }
+
+REQUEST_GET_DAYS:
+req:
+{
+    "type": "get_days",
+    "username": "lillyliv7",
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
+}
+res:
+{
+    "status": "success",
+    "days": [{
+			"year":	2025,
+			"month":	12,
+			"day":	31,
+			"score":	100,
+			"note":	"hello world!"
+		},
+        {
+			"year":	2026,
+			"month":	1,
+			"day":	1,
+			"score":	100,
+			"note":	"happy new year!"
+		}]
+}
