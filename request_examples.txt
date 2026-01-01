@@ -23,9 +23,7 @@ req:
     "password": "password123"
 }
 res:
-{
-    "status": "success"
-}
+200 (success)
 
 operation delete:
 {
@@ -35,9 +33,17 @@ operation delete:
     "password": "password123"
 }
 res:
+200 (success)
+
+operation check_token:
 {
-    "status": "success"
+    "type": "account",
+    "operation": "check_token",
+    "username": "lillyliv7",
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
+res:
+200 (success)
 
 
 
@@ -79,9 +85,7 @@ operation delete:
     "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
 res:
-{
-    "status": "success"
-}
+200 (success)
 
 operation add:
 {
@@ -96,6 +100,4 @@ operation add:
     "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
 res:
-{
-    "status": "success"
-}
+200 (success)

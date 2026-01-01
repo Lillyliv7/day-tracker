@@ -5,7 +5,8 @@
         <script>
             function login() {
                 let postData = {
-                    type: "auth",
+                    type: "account",
+                    operation: "auth",
                     username: document.getElementById("username").value,
                     password: document.getElementById("password").value,
                 }

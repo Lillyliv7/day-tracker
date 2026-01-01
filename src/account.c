@@ -166,12 +166,6 @@ bool delete_account(const char *username) {
 
 
 void handle_account_request(struct mg_connection *connection, cJSON *request_json) {
-    cJSON *pass = cJSON_GetObjectItem(request_json, "password");
-    cJSON *username = cJSON_GetObjectItem(request_json, "username");
-    if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
-        return_status_code(connection, 400);
-        return;
-    }
 
     cJSON *request_operation = cJSON_GetObjectItem(request_json, "operation");
     if (!cJSON_IsString(request_operation)) {
@@ -179,9 +173,35 @@ void handle_account_request(struct mg_connection *connection, cJSON *request_jso
         return;
     }
 
+    /* Check Token */
+
+    if(!strcmp(request_operation->valuestring, "check_token")) {
+        cJSON *token = cJSON_GetObjectItem(request_json, "token");
+        cJSON *username = cJSON_GetObjectItem(request_json, "username");
+        if (!cJSON_IsString(token) || !cJSON_IsString(username)) {
+            return_status_code(connection, 400);
+            return;
+        }
+
+        if (verify_token(username->valuestring, token->valuestring)) {
+            return_status_code(connection, 200);
+            return;
+        } else {
+            return_status_code(connection, 401);
+            return;
+        }
+    }
+
     /* Delete Account */
 
     if(!strcmp(request_operation->valuestring, "delete")) {
+        cJSON *pass = cJSON_GetObjectItem(request_json, "password");
+        cJSON *username = cJSON_GetObjectItem(request_json, "username");
+        if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
+            return_status_code(connection, 400);
+            return;
+        }
+
         char* user_data = fetch_user_data(username->valuestring);
         if (!user_data) {
             return_status_code(connection, 404);
@@ -219,6 +239,13 @@ void handle_account_request(struct mg_connection *connection, cJSON *request_jso
     /* Create Account */
 
     if(!strcmp(request_operation->valuestring, "create")) {
+        cJSON *pass = cJSON_GetObjectItem(request_json, "password");
+        cJSON *username = cJSON_GetObjectItem(request_json, "username");
+        if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
+            return_status_code(connection, 400);
+            return;
+        }
+
         if (create_account(username->valuestring, pass->valuestring)) {
             return_status_code(connection, 200);
             return;
@@ -231,6 +258,13 @@ void handle_account_request(struct mg_connection *connection, cJSON *request_jso
     /* Authenticate Account */
 
     if(!strcmp(request_operation->valuestring, "auth")) {
+        cJSON *pass = cJSON_GetObjectItem(request_json, "password");
+        cJSON *username = cJSON_GetObjectItem(request_json, "username");
+        if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
+            return_status_code(connection, 400);
+            return;
+        }
+
         if (!account_exists(username->valuestring)) {
             return_status_code(connection, 404);
             return;
