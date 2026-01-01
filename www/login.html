@@ -2,34 +2,12 @@
 <html>
     <head>
         <title>Login</title>
-        <script>
-            function login() {
-                let postData = {
-                    type: "account",
-                    operation: "auth",
-                    username: document.getElementById("username").value,
-                    password: document.getElementById("password").value,
-                }
-
-                fetch(document.getElementById("server").value, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=UTF-8',
-                    },
-                    body: JSON.stringify(postData),
-                })
-                .then(response => response.json())
-                .then(data => console.log('Success:', data))
-                .catch((error) => {
-                    console.log('Error:', error);
-                });
-            }
-        </script>
+        <script src="auth.js"></script>
     </head>
     <body>
         <textarea id="server" placeholder="Backend URL"></textarea>
         <textarea id="username" placeholder="Username"></textarea>
         <textarea id="password" placeholder="Password"></textarea>
-        <button onclick="login()">Login</button>
+        <button onclick="login(document.getElementById('server').value, document.getElementById('username').value, document.getElementById('password').value)">Login</button>
     </body>
 </html>
