@@ -4,11 +4,8 @@
 
 #include <cjson/cJSON.h>
 
-#include <fnvhash.h>
-#include <password.h>
 #include <api.h>
 #include <config.h>
-#include <account.h>
 
 int main(int argc, char **argv) {
 

@@ -19,67 +19,43 @@ void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
         //     return;
         // }
         if (msg->body.len > 1000000) {
-            ratelimit_request_res(connection);
+            return_status_code(connection, 413);
             return;
         }
 
         // allow cors
         if (mg_strcmp(msg->method, mg_str("OPTIONS")) == 0) {
-        mg_http_reply(connection, 204, 
-            "Access-Control-Allow-Origin: *\r\n"
-            "Access-Control-Allow-Methods: POST, GET, OPTIONS\r\n"
-            "Access-Control-Allow-Headers: Content-Type\r\n", 
-            "");
-        return;
-    }
+            return_status_code(connection, 204);
+            return;
+        }
 
         cJSON *request_json = cJSON_Parse(msg->body.buf);
         if (request_json == NULL) {
-            invalid_request_res(connection);
+            return_status_code(connection, 400);
             cJSON_Delete(request_json);
             return;
         }
         cJSON *request_type = cJSON_GetObjectItem(request_json, "type");
         if (!cJSON_IsString(request_type)) {
-            invalid_request_res(connection);
+            return_status_code(connection, 400);
             cJSON_Delete(request_json);
             return;
         }
 
 
-        if (!strcmp(request_type->valuestring, "auth")) {
-            handle_auth_request(connection, request_json);
-            cJSON_Delete(request_json);
-            return;
-        }
-        if (!strcmp(request_type->valuestring, "create_account")) {
-            handle_create_account_request(connection, request_json);
+        if (!strcmp(request_type->valuestring, "account")) {
+            handle_account_request(connection, request_json);
             cJSON_Delete(request_json);
             return;
         }
 
-        if (!strcmp(request_type->valuestring, "delete_account")) {
-            handle_delete_account_request(connection, request_json);
-            cJSON_Delete(request_json);
-            return;
-        }
-        if (!strcmp(request_type->valuestring, "add_day")) {
-            handle_add_day_request(connection, request_json);
-            cJSON_Delete(request_json);
-            return;
-        }
-        if (!strcmp(request_type->valuestring, "delete_day")) {
-            handle_delete_day_request(connection, request_json);
-            cJSON_Delete(request_json);
-            return;
-        }
-        if (!strcmp(request_type->valuestring, "get_days")) {
-            handle_get_days_request(connection, request_json);
+        if (!strcmp(request_type->valuestring, "day")) {
+            handle_day_request(connection, request_json);
             cJSON_Delete(request_json);
             return;
         }
 
-        mg_http_reply(connection, 500, CORS_HEADERS"", "{%m:%m}\n", MG_ESC("error"), MG_ESC("teehee"));
+        return_status_code(connection, 404);
         cJSON_Delete(request_json);
     }
 }

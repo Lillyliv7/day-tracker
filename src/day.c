@@ -106,88 +106,85 @@ bool add_day(const char *username, int year, int month, int day, int score, cons
     return result;
 }
 
-void handle_add_day_request(struct mg_connection *connection, cJSON *request_json) {
+void handle_day_request(struct mg_connection *connection, cJSON *request_json) {
     cJSON *token = cJSON_GetObjectItem(request_json, "token");
     cJSON *username = cJSON_GetObjectItem(request_json, "username");
     if (!cJSON_IsString(token) || !cJSON_IsString(username)) {
-        invalid_request_res(connection);
+        return_status_code(connection, 400);
         return;
     }
     if (!verify_token(username->valuestring, token->valuestring)) {
-        unauthorized_request_res(connection);
-        return;
-    }
-    cJSON *year = cJSON_GetObjectItem(request_json, "year");
-    cJSON *month = cJSON_GetObjectItem(request_json, "month");
-    cJSON *day = cJSON_GetObjectItem(request_json, "day");
-    cJSON *score = cJSON_GetObjectItem(request_json, "score");
-    cJSON *note = cJSON_GetObjectItem(request_json, "note");
-    if (!cJSON_IsNumber(year) || !cJSON_IsNumber(month) || !cJSON_IsNumber(day) || !cJSON_IsNumber(score)) {
-        invalid_request_res(connection);
-        return;
-    }
-    if (!cJSON_IsString(note)) {
-        invalid_request_res(connection);
-        return;
-    }
-    if(!add_day(username->valuestring, year->valueint, month->valueint, day->valueint, score->valueint, note->valuestring)) {
-        server_error_res(connection);
-        return;
-    }
-    success_res(connection);
-}
-
-void handle_delete_day_request (struct mg_connection *connection, cJSON *request_json) {
-    cJSON *token = cJSON_GetObjectItem(request_json, "token");
-    cJSON *username = cJSON_GetObjectItem(request_json, "username");
-    if (!cJSON_IsString(token) || !cJSON_IsString(username)) {
-        invalid_request_res(connection);
-        return;
-    }
-    if (!verify_token(username->valuestring, token->valuestring)) {
-        unauthorized_request_res(connection);
-        return;
-    }
-    cJSON *year = cJSON_GetObjectItem(request_json, "year");
-    cJSON *month = cJSON_GetObjectItem(request_json, "month");
-    cJSON *day = cJSON_GetObjectItem(request_json, "day");
-    if (!cJSON_IsNumber(year) || !cJSON_IsNumber(month) || !cJSON_IsNumber(day)) {
-        invalid_request_res(connection);
-        return;
-    }
-    if(!delete_day(username->valuestring, year->valueint, month->valueint, day->valueint)) {
-        server_error_res(connection);
-        return;
-    }
-    success_res(connection);
-}
-
-void handle_get_days_request (struct mg_connection *connection, cJSON *request_json) {
-    cJSON *token = cJSON_GetObjectItem(request_json, "token");
-    cJSON *username = cJSON_GetObjectItem(request_json, "username");
-    if (!cJSON_IsString(token) || !cJSON_IsString(username)) {
-        invalid_request_res(connection);
-        return;
-    }
-    if (!verify_token(username->valuestring, token->valuestring)) {
-        unauthorized_request_res(connection);
+        return_status_code(connection, 401);
         return;
     }
 
-    char *user_data = fetch_user_data(username->valuestring);
-    if (user_data == NULL) {
-        return;
-    }
-    cJSON *user_json = cJSON_Parse(user_data);
-    free(user_data);
-    if (user_json == NULL) {
+    cJSON *request_operation = cJSON_GetObjectItem(request_json, "operation");
+    if (!cJSON_IsString(request_operation)) {
+        return_status_code(connection, 400);
         return;
     }
 
-    cJSON *days = cJSON_GetObjectItem(user_json, "days");
-    if (!cJSON_IsArray(days))
-        days = cJSON_AddArrayToObject(user_json, "days");
-    
+    /* Get Days */
 
-    mg_http_reply(connection, 200, CORS_HEADERS"", "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("Success"), MG_ESC("days"), MG_ESC(cJSON_PrintUnformatted(days)));
+    if(!strcmp(request_operation->valuestring, "get_all")) {
+        char *user_data = fetch_user_data(username->valuestring);
+        if (user_data == NULL) {
+            return_status_code(connection, 500);
+            return;
+        }
+        cJSON *user_json = cJSON_Parse(user_data);
+        free(user_data);
+        if (user_json == NULL) {
+            return_status_code(connection, 500);
+            return;
+        }
+
+        cJSON *days = cJSON_GetObjectItem(user_json, "days");
+        if (!cJSON_IsArray(days))
+            days = cJSON_AddArrayToObject(user_json, "days");
+        
+
+        mg_http_reply(connection, 200, CORS_HEADERS"", "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("Success"), MG_ESC("days"), MG_ESC(cJSON_PrintUnformatted(days)));
+    }
+
+    /* Add a Day */
+
+    if(!strcmp(request_operation->valuestring, "add")) {
+        cJSON *year = cJSON_GetObjectItem(request_json, "year");
+        cJSON *month = cJSON_GetObjectItem(request_json, "month");
+        cJSON *day = cJSON_GetObjectItem(request_json, "day");
+        cJSON *score = cJSON_GetObjectItem(request_json, "score");
+        cJSON *note = cJSON_GetObjectItem(request_json, "note");
+        if (!cJSON_IsNumber(year) || !cJSON_IsNumber(month) || !cJSON_IsNumber(day) || !cJSON_IsNumber(score)) {
+            return_status_code(connection, 400);
+            return;
+        }
+        if (!cJSON_IsString(note)) {
+            return_status_code(connection, 400);
+            return;
+        }
+        if(!add_day(username->valuestring, year->valueint, month->valueint, day->valueint, score->valueint, note->valuestring)) {
+            return_status_code(connection, 500);
+            return;
+        }
+        return_status_code(connection, 200);
+    }
+
+    /* Delete a Day */
+
+    if(!strcmp(request_operation->valuestring, "add")) {
+        cJSON *year = cJSON_GetObjectItem(request_json, "year");
+        cJSON *month = cJSON_GetObjectItem(request_json, "month");
+        cJSON *day = cJSON_GetObjectItem(request_json, "day");
+        if (!cJSON_IsNumber(year) || !cJSON_IsNumber(month) || !cJSON_IsNumber(day)) {
+            return_status_code(connection, 400);
+            return;
+        }
+        if(!delete_day(username->valuestring, year->valueint, month->valueint, day->valueint)) {
+            return_status_code(connection, 500);
+            return;
+        }
+        return_status_code(connection, 200);
+    }
+
 }

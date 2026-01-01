@@ -1,78 +1,51 @@
 
-
-REQUEST_AUTH:
+REQUEST_ACCOUNT
+operation auth:
 req:
 {
-    "type": "auth",
-    "username": "lillyliv7"
-    "password": "password123"
-}
-res:
-{
-    "status": "success"
-    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
-}
-
-REQUEST_CREATE_ACCOUNT:
-req:
-{
-    "type": "create_account",
-    "username": "lillyliv7"
-    "password": "password123"
-}
-res:
-{
-    "status": "success"
-}
-
-REQUEST_DELETE_ACCOUNT:
-req:
-{
-    "type": "delete_account",
-    "username": "lillyliv7"
-    "password": "password123"
-}
-res:
-{
-    "status": "success"
-}
-
-REQUEST_ADD_DAY:
-req:
-{
-    "type": "add_day",
-    "year": 2025,
-    "month": 12,
-    "day": 25,
-    "rating: 100,
-    "note": "great day!",
+    "type": "account",
+    "operation": "auth",
     "username": "lillyliv7",
-    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
+    "password": "password123"
 }
 res:
 {
-    "status": "success"
+    "status": "success",
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
 
-REQUEST_DELETE_DAY:
+operation create:
 req:
 {
-    "type": "delete_day",
-    "year": 2025,
-    "month": 12,
-    "day": 25,
+    "type": "account",
+    "operation": "create",
     "username": "lillyliv7",
-    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
+    "password": "password123"
 }
 res:
 {
     "status": "success"
 }
 
-REQUEST_GET_DAYS:
-req:
+operation delete:
 {
-    "type": "get_days",
+    "type": "account",
+    "operation": "delete",
+    "username": "lillyliv7",
+    "password": "password123"
+}
+res:
+{
+    "status": "success"
+}
+
+
+
+REQUEST_DAY:
+operation get_all:
+{
+    "type": "day",
+    "operation": "get_all",
     "username": "lillyliv7",
     "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
 }
@@ -95,3 +68,34 @@ res:
 		}]
 }
 
+operation delete:
+{
+    "type": "day",
+    "operation": "delete",
+    "year": 2025,
+    "month": 12,
+    "day": 25,
+    "username": "lillyliv7",
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
+}
+res:
+{
+    "status": "success"
+}
+
+operation add:
+{
+    "type": "day",
+    "operation": "add",
+    "year": 2025,
+    "month": 12,
+    "day": 25,
+    "rating: 100,
+    "note": "great day!",
+    "username": "lillyliv7",
+    "token": "AbuifaoisndAIUFbAISndobuansuIBASUDnoaodaisdboiaNIAOSIBD"
+}
+res:
+{
+    "status": "success"
+}

@@ -7,7 +7,7 @@
 
 #include <responses.h>
 #include <password.h>
-#include <token.h>
+#include <generate_token.h>
 #include <fnvhash.h>
 #include <config.h>
 #include <cjson_helper.h>
@@ -83,7 +83,10 @@ char* account_create_token(cJSON *user_json) {
     return token;
 }
 
-char* check_account_token(const char *username) {
+// this function is called after the user has been authenticated
+// and is always supposed to return a token. If the token is out
+// of date, it automatically creates a new one.
+char* token_auth(const char *username) {
     char *user_data = fetch_user_data(username);
     if (user_data == NULL) {
         return NULL;
@@ -95,13 +98,18 @@ char* check_account_token(const char *username) {
     }
     cJSON *token = cJSON_GetObjectItem(user_json, "token");
     if (!cJSON_IsString(token)) {
-        return account_create_token(user_json);
+        char* token_string = account_create_token(user_json);
+        cJSON_Delete(user_json);
+        return token_string;
     }
     if (cJSON_GetObjectItem(user_json, "token_expiry")->valuedouble < time(NULL)) {
-        return account_create_token(user_json);
+        char* token_string = account_create_token(user_json);
+        cJSON_Delete(user_json);
+        return token_string;
     }
-    return strdup(token->valuestring);
-    
+    char* token_string = strdup(token->valuestring);
+    cJSON_Delete(user_json);
+    return token_string;
 }
 
 bool verify_token(const char *username, const char *token) {
@@ -156,73 +164,121 @@ bool delete_account(const char *username) {
     return (remove(path) == 0);
 }
 
-void handle_delete_account_request(struct mg_connection *connection, cJSON *request_json) {
+
+void handle_account_request(struct mg_connection *connection, cJSON *request_json) {
     cJSON *pass = cJSON_GetObjectItem(request_json, "password");
     cJSON *username = cJSON_GetObjectItem(request_json, "username");
     if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
-        invalid_request_res(connection);
+        return_status_code(connection, 400);
         return;
     }
 
-    if (!account_exists(username->valuestring)) {
-        unauthorized_request_res(connection);
+    cJSON *request_operation = cJSON_GetObjectItem(request_json, "operation");
+    if (!cJSON_IsString(request_operation)) {
+        return_status_code(connection, 400);
         return;
     }
 
-    if (verify_password(pass->valuestring, generate_hash("teehee"))) {
-        if (delete_account(username->valuestring)) {
-            success_res(connection);
+    /* Delete Account */
+
+    if(!strcmp(request_operation->valuestring, "delete")) {
+        char* user_data = fetch_user_data(username->valuestring);
+        if (!user_data) {
+            return_status_code(connection, 404);
+            return;
+        }
+        cJSON *account_json = cJSON_Parse(user_data);
+        if (!account_json) {
+            return_status_code(connection, 500);
+            cJSON_Delete(account_json);
+            return;
+        }
+
+        cJSON *account_password = cJSON_GetObjectItem(account_json, "password");
+        if (!cJSON_IsString(account_password)) {
+            return_status_code(connection, 500);
+            return;
+        }
+        if (verify_password(pass->valuestring, account_password->valuestring)) {
+            if (delete_account(username->valuestring)) {
+                return_status_code(connection, 200);
+                cJSON_Delete(account_json);
+                return;
+            } else {
+                return_status_code(connection, 500);
+                cJSON_Delete(account_json);
+                return;
+            }
+        } else {
+            return_status_code(connection, 401);
+            cJSON_Delete(account_json);
+            return;
+        }
+    }
+
+    /* Create Account */
+
+    if(!strcmp(request_operation->valuestring, "create")) {
+        if (create_account(username->valuestring, pass->valuestring)) {
+            return_status_code(connection, 200);
             return;
         } else {
-            server_error_res(connection);
+            return_status_code(connection, 403);
             return;
         }
-    } else {
-        unauthorized_request_res(connection);
-        return;
-    }
-}
-
-void handle_create_account_request(struct mg_connection *connection, cJSON *request_json) {
-    cJSON *pass = cJSON_GetObjectItem(request_json, "password");
-    cJSON *username = cJSON_GetObjectItem(request_json, "username");
-    if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
-        invalid_request_res(connection);
-        return;
-    }
-    if (create_account(username->valuestring, pass->valuestring)) {
-        success_res(connection);
-        return;
-    } else {
-        invalid_request_res(connection);
-        return;
-    }
-}
-
-void handle_auth_request(struct mg_connection *connection, cJSON *request_json) {
-    cJSON *pass = cJSON_GetObjectItem(request_json, "password");
-    cJSON *username = cJSON_GetObjectItem(request_json, "username");
-    if (!cJSON_IsString(pass) || !cJSON_IsString(username)) {
-        invalid_request_res(connection);
-        return;
     }
 
-    if (!account_exists(username->valuestring)) {
-        unauthorized_request_res(connection);
-        return;
-    }
+    /* Authenticate Account */
 
-    if (verify_password(pass->valuestring, generate_hash("teehee"))) {
-        char* token = check_account_token(username->valuestring);
-        if (token == NULL) {
-            server_error_res(connection);
+    if(!strcmp(request_operation->valuestring, "auth")) {
+        if (!account_exists(username->valuestring)) {
+            return_status_code(connection, 404);
             return;
         }
-        mg_http_reply(connection, 200, CORS_HEADERS, "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("success"), MG_ESC("token"), MG_ESC(token));
-        free(token);
-        return;
-    } else {
-        unauthorized_request_res(connection);
-        return;
+
+        char* user_data = fetch_user_data(username->valuestring);
+        if (!user_data) {
+            return_status_code(connection, 404);
+            return;
+        }
+        cJSON *account_json = cJSON_Parse(user_data);
+        if (!account_json) {
+            return_status_code(connection, 500);
+            free(user_data);
+            return;
+        }
+
+        cJSON *account_password = cJSON_GetObjectItem(account_json, "password");
+        if (!cJSON_IsString(account_password)) {
+            return_status_code(connection, 500);
+            cJSON_Delete(account_json);
+            free(user_data);
+            return;
+        }
+
+        if (verify_password(pass->valuestring, account_password->valuestring)) {
+            puts("verified");
+            char* token = token_auth(username->valuestring);
+            if (token == NULL) {
+                return_status_code(connection, 500);
+                cJSON_Delete(account_json);
+                free(user_data);
+                return;
+            }
+            mg_http_reply(connection, 200, CORS_HEADERS, "{%m:%m,%m:%m}\n", MG_ESC("status"), MG_ESC("success"), MG_ESC("token"), MG_ESC(token));
+            free(token);
+            cJSON_Delete(account_json);
+            free(user_data);
+            return;
+        } else {
+            return_status_code(connection, 401);
+            cJSON_Delete(account_json);
+            free(user_data);
+            return;
+        }
+
     }
+
+    return_status_code(connection, 404);
+    return;
 }
