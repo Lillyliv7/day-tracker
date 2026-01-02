@@ -3,11 +3,16 @@
     <head>
         <title>Login</title>
         <script src="auth.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
-        <textarea id="server" placeholder="Backend URL"></textarea>
-        <textarea id="username" placeholder="Username"></textarea>
-        <textarea id="password" placeholder="Password"></textarea>
-        <button onclick="login(document.getElementById('server').value, document.getElementById('username').value, document.getElementById('password').value)">Login</button>
+        <div class="modal-container">
+            <div class="modal-area">
+                <textarea class="modal-element" id="server" placeholder="Backend URL"></textarea>
+                <textarea class="modal-element" id="username" placeholder="Username"></textarea>
+                <textarea class="modal-element" id="password" placeholder="Password"></textarea>
+                <button class="modal-button modal-element" onclick="login(document.getElementById('server').value, document.getElementById('username').value, document.getElementById('password').value)">Login</button>
+            </div>
+        </div>
     </body>
 </html>

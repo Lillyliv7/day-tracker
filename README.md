@@ -46,6 +46,6 @@ To run:
 ./day-tracker <config.json>
 
 Configuration:  
-"listen_address": The URL to listen for connections on, should look something like "http://0.0.0.0:8000"  
-"account_db_path": The path to the directory where each user's JSON file is stored. Directory must exist prior to running  
+"listen_address": The URL to listen for connections on, should look something like "http://0.0.0.0:8000".  
+"account_db_path": The path to the directory where each user's JSON file is stored. Directory must exist prior to running.  
 "www_path": The path to the directory where the HTML frontend is stored. Warning: you can not use ".." in the path to go back a directory or it will return an error.  
