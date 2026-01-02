@@ -13,19 +13,25 @@ void handle_event(struct mg_connection *connection, int ev, void *ev_data) {
     if(ev == MG_EV_HTTP_MSG) {
         struct mg_http_message *msg = (struct mg_http_message *) ev_data;
 
-        puts(msg->body.buf);
-        // if (msg->body.len == 0) {
-        //     invalid_request_res(connection);
-        //     return;
-        // }
-        if (msg->body.len > 1000000) {
-            return_status_code(connection, 413);
+        // puts(msg->method.buf);
+        // printf("%d\n",msg->method.len);
+        // puts(msg->body.buf);
+        
+        if (mg_strcmp(msg->method, mg_str("GET")) == 0) {
+            struct mg_http_serve_opts opts = { .root_dir = get_config_string("www_path")};
+            mg_http_serve_dir(connection, msg, &opts);
             return;
         }
 
         // allow cors
         if (mg_strcmp(msg->method, mg_str("OPTIONS")) == 0) {
             return_status_code(connection, 204);
+            return;
+        }
+
+        // if the request is not a post, return invalid request
+        if (mg_strcmp(msg->method, mg_str("POST"))) {
+            return_status_code(connection, 400);
             return;
         }
 

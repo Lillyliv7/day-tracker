@@ -37,9 +37,9 @@ make
 ```
 
 # Important!
-The API does not support HTTPS! Reccomended usage is to run an nginx reverse proxy on the same machine that the API is running on that supports HTTPS and also serves the webpages in www/
+The server does not support HTTPS! Reccomended usage is to run an nginx reverse proxy that has HTTPS on the same machine that the server is running on and only expose the proxy to the Internet.
 
-If you do not use HTTPS for the API, passwords and user data will be **unencrypted** when sent to the server and vice versa!
+If you do not use an HTTPS compatible reverse proxy for the server, passwords and user data will be **unencrypted** when sent to the server and vice versa!
 
 # Usage
 To run:
@@ -47,4 +47,5 @@ To run:
 
 Configuration:  
 "listen_address": The URL to listen for connections on, should look something like "http://0.0.0.0:8000"  
-"account_db_path": The path to the directory where each user's JSON file is stored. Directory must exist prior to running
+"account_db_path": The path to the directory where each user's JSON file is stored. Directory must exist prior to running  
+"www_path": The path to the directory where the HTML frontend is stored. Warning: you can not use ".." in the path to go back a directory or it will return an error.  

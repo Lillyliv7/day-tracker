@@ -23,6 +23,10 @@ int main(int argc, char **argv) {
         fprintf(stderr, "\"account_db_path\" not found in config!\n");
         return 1;
     }
+    if (!get_config_string("www_path")) {
+        fprintf(stderr, "\"www_path\" not found in config!\n");
+        return 1;
+    }
 
     DIR *db_dir = opendir(get_config_string("account_db_path"));
     if(!db_dir) {

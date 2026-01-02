@@ -26,6 +26,7 @@ async function checkToken() {
         return false;
     }
 }
+
 function login(server, username, password) {
     if (server === undefined ||
         username === undefined ||
