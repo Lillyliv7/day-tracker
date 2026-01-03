@@ -5,9 +5,15 @@
   font-style: normal;
   font-display: swap;
 }
-html {
+
+:root {
+    --off-white: #f6eee3;
+    --dark-off-white: #e5cbba;
+    --shadow-color: #31313197;
+    --off-black: #313131;
     font-family: 'Platypi';
-    background-color:  	#f6eee3;
+    background-color: var(--off-white);
+    color: #313131;
 }
 .modal-container {
     z-index: 1000;
@@ -25,9 +31,9 @@ html {
     width: 30em;
     margin: auto;
     padding: 0.5em;
-    background-color:  	#f6eee3;
-    box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.5);
-    border-radius: 0px;
+    background-color: var(--off-white);
+    box-shadow: 10px 10px 5px var(--shadow-color);
+    border: 1px solid var(--off-black);
 }
 .modal-element {
     font-family: inherit;
@@ -45,19 +51,20 @@ html {
     margin-right:auto;
     width: max-content;
     padding: 0.5em;
-    background-color:  	#e5cbba;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+    background-color: var(--dark-off-white);
+    box-shadow: 5px 5px 5px var(--shadow-color);
+    border: 1px solid var(--off-black);
+    color: var(--off-black);
 
 }
 .modal-textbox {
-    background-color:  	#e5cbba;
-    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+    background-color: var(--dark-off-white);
+    box-shadow: 5px 5px 5px var(--shadow-color);
+    border: 1px solid var(--off-black);
 }
 .modal-name {
-    width: 100%;
     margin: auto;
     font-size: 3em;
-    align-self: center;
 }
 .button-flex-layout {
     display: flex;
