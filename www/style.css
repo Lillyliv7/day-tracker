@@ -13,8 +13,19 @@
     --off-black: #313131;
     font-family: 'Platypi';
     background-color: var(--off-white);
-    color: #313131;
+    color: var(--off-black);
+    accent-color: var(--off-black);
 }
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 .modal-container {
     z-index: 1000;
     left: 0px;
@@ -25,6 +36,7 @@
     position: fixed;
     align-items: center;
     overflow: auto;
+    animation: 0.25s cubic-bezier(0.25, 0.5, 0.75, 1) 0s 1 slideInFromTop;
 }
 .modal-area {
     display: grid;
@@ -61,11 +73,21 @@
     background-color: var(--dark-off-white);
     box-shadow: 5px 5px 5px var(--shadow-color);
     border: 1px solid var(--off-black);
+    color:var(--off-black);
 }
 .modal-name {
     margin: auto;
     font-size: 3em;
 }
+
+
 .button-flex-layout {
     display: flex;
+}
+button {
+    cursor:pointer;
+}
+h1 {
+    cursor:default;
+    user-select: none;
 }
